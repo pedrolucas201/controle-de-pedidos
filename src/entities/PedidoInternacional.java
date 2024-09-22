@@ -7,7 +7,7 @@ public class PedidoInternacional extends Pedido {
 
     public PedidoInternacional(Cliente cliente, List<Produto> produtos, double taxaImportacao) {
         super(cliente, produtos);
-        this.taxaImportacao = taxaImportacao;
+        setTaxaImportacao(taxaImportacao);
     }
 
     @Override
@@ -20,6 +20,9 @@ public class PedidoInternacional extends Pedido {
     }
 
     public void setTaxaImportacao(double taxaImportacao) {
+        if (taxaImportacao < 0) {
+            throw new IllegalArgumentException("A taxa de importação não pode ser negativa");
+        }
         this.taxaImportacao = taxaImportacao;
     }
 }

@@ -7,8 +7,8 @@ public class Pedido {
     private List<Produto> produtos;
 
     public Pedido(Cliente cliente, List<Produto> produtos) {
-        this.cliente = cliente;
-        this.produtos = produtos;
+        setCliente(cliente);
+        setProdutos(produtos);
     }
 
     public Cliente getCliente() {
@@ -16,6 +16,9 @@ public class Pedido {
     }
 
     public void setCliente(Cliente cliente) {
+        if (cliente == null) {
+            throw new IllegalArgumentException("Cliente não pode ser nulo");
+        }
         this.cliente = cliente;
     }
 
@@ -24,6 +27,9 @@ public class Pedido {
     }
 
     public void setProdutos(List<Produto> produtos) {
+        if (produtos == null || produtos.isEmpty()) {
+            throw new IllegalArgumentException("A lista de produtos não pode ser nula ou vazia");
+        }
         this.produtos = produtos;
     }
 

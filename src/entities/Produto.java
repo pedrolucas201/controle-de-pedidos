@@ -5,8 +5,8 @@ public class Produto {
     private double preco;
 
     public Produto(String nome, double preco) {
-        this.nome = nome;
-        this.preco = preco;
+        setNome(nome);
+        setPreco(preco);
     }
 
     public String getNome() {
@@ -14,6 +14,9 @@ public class Produto {
     }
 
     public void setNome(String nome) {
+        if (nome == null || nome.trim().isEmpty()) {
+            throw new IllegalArgumentException("O nome do produto não pode ser nulo ou vazio");
+        }
         this.nome = nome;
     }
 
@@ -22,6 +25,9 @@ public class Produto {
     }
 
     public void setPreco(double preco) {
+        if (preco < 0) {
+            throw new IllegalArgumentException("O preço do produto não pode ser negativo");
+        }
         this.preco = preco;
     }
 }

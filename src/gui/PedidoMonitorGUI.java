@@ -1,18 +1,16 @@
 package gui;
 
 import entities.*;
-import services.RepositorioDePedidosImpl;
+import services.IRepositorioDePedidosImpl;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PedidoMonitorGUI extends JFrame {
-    private RepositorioDePedidosImpl repositorio;
+    private IRepositorioDePedidosImpl repositorio;
     private JTextField nomeClienteField;
     private JTextField enderecoClienteField;
     private JTextField nomeProdutoField;
@@ -23,7 +21,7 @@ public class PedidoMonitorGUI extends JFrame {
     private int pedidoSelecionado = -1;  // Para atualizar ou deletar o pedido selecionado
 
     public PedidoMonitorGUI() {
-        repositorio = new RepositorioDePedidosImpl();
+        repositorio = new IRepositorioDePedidosImpl();
 
         setTitle("Sistema de Controle de Pedidos");
         setSize(800, 400);
@@ -32,7 +30,7 @@ public class PedidoMonitorGUI extends JFrame {
 
         // Painel de Entrada de Dados
         JPanel inputPanel = new JPanel();
-        inputPanel.setLayout(new GridLayout(5, 2));
+        inputPanel.setLayout(new GridLayout(6, 2));
 
         inputPanel.add(new JLabel("Nome do Cliente:"));
         nomeClienteField = new JTextField();
@@ -55,24 +53,16 @@ public class PedidoMonitorGUI extends JFrame {
         inputPanel.add(tipoPedidoComboBox);
 
         JButton adicionarButton = new JButton("Adicionar Pedido");
-        adicionarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (pedidoSelecionado == -1) {
-                    adicionarPedido();
-                } else {
-                    atualizarPedido(pedidoSelecionado);
-                }
+        adicionarButton.addActionListener(e -> {
+            if (pedidoSelecionado == -1) {
+                adicionarPedido();
+            } else {
+                atualizarPedido(pedidoSelecionado);
             }
         });
 
         JButton deletarButton = new JButton("Deletar Pedido");
-        deletarButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                deletarPedido();
-            }
-        });
+        deletarButton.addActionListener(e -> deletarPedido());
 
         // Tabela de pedidos
         String[] colunas = {"Cliente", "Produto", "Preço", "Tipo"};
@@ -88,19 +78,32 @@ public class PedidoMonitorGUI extends JFrame {
             }
         });
 
+        // Layout
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(adicionarButton);
+        buttonPanel.add(deletarButton);
+
         add(inputPanel, BorderLayout.NORTH);
-        add(adicionarButton, BorderLayout.CENTER);
-        add(deletarButton, BorderLayout.EAST);
+        add(buttonPanel, BorderLayout.CENTER);
         add(scrollPane, BorderLayout.SOUTH);
 
         setVisible(true);
+        listarPedidos();  // Carrega a lista de pedidos ao iniciar
     }
 
     private void adicionarPedido() {
         String nomeCliente = nomeClienteField.getText();
         String enderecoCliente = enderecoClienteField.getText();
         String nomeProduto = nomeProdutoField.getText();
-        double precoProduto = Double.parseDouble(precoProdutoField.getText());
+        double precoProduto;
+
+        try {
+            precoProduto = Double.parseDouble(precoProdutoField.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Preço inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         String tipoPedido = (String) tipoPedidoComboBox.getSelectedItem();
 
         Cliente cliente = new Cliente(nomeCliente, enderecoCliente);
@@ -150,7 +153,15 @@ public class PedidoMonitorGUI extends JFrame {
         String nomeCliente = nomeClienteField.getText();
         String enderecoCliente = enderecoClienteField.getText();
         String nomeProduto = nomeProdutoField.getText();
-        double precoProduto = Double.parseDouble(precoProdutoField.getText());
+        double precoProduto;
+
+        try {
+            precoProduto = Double.parseDouble(precoProdutoField.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Preço inválido!", "Erro", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         String tipoPedido = (String) tipoPedidoComboBox.getSelectedItem();
 
         Cliente cliente = new Cliente(nomeCliente, enderecoCliente);
@@ -189,6 +200,6 @@ public class PedidoMonitorGUI extends JFrame {
     }
 
     public static void main(String[] args) {
-        new PedidoMonitorGUI();
+        SwingUtilities.invokeLater(PedidoMonitorGUI::new);
     }
 }
