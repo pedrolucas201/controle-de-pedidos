@@ -8,9 +8,11 @@ import java.util.List;
 
 public class IRepositorioDePedidosImpl implements IRepositorioDePedidos {
     private List<Pedido> pedidos;
+    private Pilha<Pedido> pilhaPedidos;
 
     public IRepositorioDePedidosImpl() {
         pedidos = new ArrayList<>();
+        pilhaPedidos = new Pilha<>();
     }
 
     @Override
@@ -19,6 +21,7 @@ public class IRepositorioDePedidosImpl implements IRepositorioDePedidos {
             throw new IllegalArgumentException("Pedido não pode ser nulo.");
         }
         pedidos.add(pedido);
+        pilhaPedidos.empilhar(pedido); // Empilha o pedido
     }
 
     @Override
@@ -42,7 +45,11 @@ public class IRepositorioDePedidosImpl implements IRepositorioDePedidos {
         if (indice < 0 || indice >= pedidos.size()) {
             throw new IndexOutOfBoundsException("Índice de pedido inválido.");
         }
-        pedidos.remove(indice);
+        Pedido pedidoRemovido = pedidos.remove(indice);
+        // Desempilha o pedido removido se existir
+        if (pedidoRemovido != null) {
+            pilhaPedidos.desempilhar(); // Desempilha o pedido
+        }
     }
 
     @Override
@@ -51,5 +58,18 @@ public class IRepositorioDePedidosImpl implements IRepositorioDePedidos {
             throw new IndexOutOfBoundsException("Índice de pedido inválido.");
         }
         return pedidos.get(indice);
+    }
+
+    // Métodos para pilha
+    public Pedido desempilharPedido() {
+        return pilhaPedidos.desempilhar();
+    }
+
+    public Pedido visualizarUltimaPedido() {
+        return pilhaPedidos.visualizarUltimo();
+    }
+
+    public boolean isPilhaVazia() {
+        return pilhaPedidos.isEmpty();
     }
 }

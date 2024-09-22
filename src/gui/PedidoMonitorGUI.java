@@ -64,6 +64,9 @@ public class PedidoMonitorGUI extends JFrame {
         JButton deletarButton = new JButton("Deletar Pedido");
         deletarButton.addActionListener(e -> deletarPedido());
 
+        JButton desempilharButton = new JButton("Desempilhar Pedido");
+        desempilharButton.addActionListener(e -> desempilharPedido());
+
         // Tabela de pedidos
         String[] colunas = {"Cliente", "Produto", "Preço", "Tipo"};
         tableModel = new DefaultTableModel(colunas, 0);
@@ -82,6 +85,7 @@ public class PedidoMonitorGUI extends JFrame {
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(adicionarButton);
         buttonPanel.add(deletarButton);
+        buttonPanel.add(desempilharButton); // Adiciona o botão de desempilhar
 
         add(inputPanel, BorderLayout.NORTH);
         add(buttonPanel, BorderLayout.CENTER);
@@ -188,6 +192,16 @@ public class PedidoMonitorGUI extends JFrame {
             listarPedidos();
             limparCampos();
             pedidoSelecionado = -1;  // Resetar seleção
+        }
+    }
+
+    private void desempilharPedido() {
+        if (!repositorio.isPilhaVazia()) {
+            Pedido pedidoDesempilhado = repositorio.desempilharPedido();
+            JOptionPane.showMessageDialog(this, "Pedido desempilhado: " + pedidoDesempilhado.getCliente().getNome());
+            listarPedidos();
+        } else {
+            JOptionPane.showMessageDialog(this, "Não há pedidos na pilha!", "Erro", JOptionPane.ERROR_MESSAGE);
         }
     }
 
